@@ -10,11 +10,12 @@ const localizer = momentLocalizer(moment);
 import {
   Dialog,
 } from "@/components/ui/dialog";
-import { createNewBooking, fetchSlots } from "@/api/bookings.js";
+import { createNewSlot, fetchSlots } from "@/api/slots.js";
 import { createNewMeetingReview } from "@/api/meetingReviews.js";
 import { DialogTemplate } from "@/components/CalendarView/DialogTemplate.jsx";
+import {addTwoHoursToStart} from "@/helpers/DateHelper.js";
 
-export function CalendarView({ users }) {
+export function CalendarViewCoach({ users }) {
   const [view, setView] = useState("month");
   const [meetingReviewRating, setMeetingReviewRating] = useState("");
   const [date, setDate] = useState(moment());
@@ -55,8 +56,7 @@ export function CalendarView({ users }) {
   };
 
   const handleSubmit = (timeslotData) => {
-    debugger;
-    createNewBooking(id, timeslotData).then((e) =>
+    createNewSlot(id, timeslotData).then((e) =>
       setFetchedEvents([...fetchedEvents, e]),
     );
     handleClose();
@@ -80,14 +80,14 @@ export function CalendarView({ users }) {
     handleClose();
   };
 
-  const handleSelectSlot = (p) => {
+  const handleSelectSlot = (selectedTimeSlot) => {
     if (view === "month") {
       setView("week");
-      setDate(moment(p.start));
+      setDate(moment(selectedTimeSlot.start));
     } else {
-      p.end = moment(new Date(p.start)).add(2, "hour").toDate();
-      p.status = "new";
-      setTimeslotData(p);
+      selectedTimeSlot.end = addTwoHoursToStart(selectedTimeSlot.start)
+      selectedTimeSlot.status = "new";
+      setTimeslotData(selectedTimeSlot);
       setDisplayDialog(true);
     }
   };
@@ -133,12 +133,13 @@ export function CalendarView({ users }) {
       />
     );
   };
+  const currentUser = users[id]
 
   return (
     <div className="w-full">
       <div className="text-3xl">
         📆 Booking Calendar App 📆
-        <p>Hello ID: {id}</p>
+        <p>Hello, {currentUser.name}</p>
       </div>
       <div>
         <div>

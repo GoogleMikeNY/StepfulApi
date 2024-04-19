@@ -19,22 +19,10 @@ import {
 } from "@/components/ui/dialog";
 import { formatDate } from "@/helpers/DateHelper.js";
 import {
-  createNewBooking,
   fetchSlots,
   updateSlotWithStudent,
-} from "@/api/bookings.js";
+} from "@/api/slots.js";
 
-/*
- *
- * fetchSlots: fetchOnlySlotsPertainingToThemselves | fetchAllCoachSlots
- * handleSelectEvent: noop | opens information about the booking and check if there's an issue.
- * handleSubmit? createNewBooking | UpdateBookingToBeTaken By the student
- * handleSelect: ChangeView | noop
- * handleViewChange: ChangeDate | noop
- * handleOnNavigate: Debugger? | debugger?
- *
- *
- * */
 export function CalendarViewStudent({ users }) {
   const [view, setView] = useState("month");
   const [date, setDate] = useState(moment());

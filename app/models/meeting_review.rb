@@ -1,3 +1,3 @@
 class MeetingReview < ApplicationRecord
-  belongs_to :slot
+  belongs_to :slot, dependent: :destroy
 end

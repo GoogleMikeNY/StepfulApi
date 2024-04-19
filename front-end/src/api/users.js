@@ -1,4 +1,5 @@
 const {VITE_API_URL} = import.meta.env
+
 export const getUsers = async () => {
   const userResponse = await fetch(`${VITE_API_URL}/users`, {
     method: "GET",

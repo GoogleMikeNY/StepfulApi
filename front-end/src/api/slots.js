@@ -1,5 +1,6 @@
 const {VITE_API_URL} = import.meta.env
-export const createNewBooking = async (userId, timeslotData) => {
+
+export const createNewSlot = async (userId, timeslotData) => {
   const slotResponse = await fetch(`${VITE_API_URL}/slots`, {
     method: "POST",
     headers: {
@@ -26,10 +27,7 @@ export const fetchSlots = async (queryParams = {}) => {
     },
   })
 
-  const slotsResponseJSON = await slotsResponse.json()
-
-  console.log("Are we fetching the things??", slotsResponseJSON)
-  return slotsResponseJSON
+  return await slotsResponse.json()
 }
 
 export const updateSlotWithStudent = async (user, slotId) => {
@@ -46,24 +44,5 @@ export const updateSlotWithStudent = async (user, slotId) => {
     })
   })
 
-  const slotsResponseJSON = await slotsResponse.json()
-
-  console.log("Are we fetching the things??", slotsResponseJSON)
-  return slotsResponseJSON
-
-}
-
-export const fetchAvailableSlots = async () => {
-  const slotsResponse = await fetch(`${VITE_API_URL}/slots`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json",
-    },
-  })
-
-  const slotsResponseJSON = await slotsResponse.json()
-
-  console.log("Are we fetching the things??", slotsResponseJSON)
-  return slotsResponseJSON
+  return await slotsResponse.json()
 }

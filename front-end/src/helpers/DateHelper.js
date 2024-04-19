@@ -5,8 +5,8 @@ export const formatDate = d => {
   return moment(dateObject).format('MMMM Do YYYY, h:mm:ss a')
 }
 
-export const formatEndTimeSlot = startTimeSlot => {
+export const addTwoHoursToStart = startTimeSlot => {
   const dateObject = new Date(startTimeSlot)
 
-  return moment(dateObject).add(2, 'hour').format('MMMM Do YYYY, h:mm:ss a')
+  return moment(dateObject).add(2, 'hour').toDate()
 }
