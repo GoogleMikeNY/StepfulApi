@@ -70,3 +70,10 @@ Maybe using the props.children for the template so it can render any type of vie
 Right now, the json returns snake case for values. I often will change it to camel case. The API should have a serializer
 so that it follows json convention.
 
+
+## Last Words:
+Thanks for the opportunity. Any feedback will be appreciated. My email is [mnunez903@gmail.com](mailto:mnunez903@gmail.com)
+
+As mentioned before, I've been interested in learning Go, so I plan to continue working on this apps back-end.
+
+
