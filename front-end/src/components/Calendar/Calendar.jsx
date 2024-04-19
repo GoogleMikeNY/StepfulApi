@@ -47,7 +47,7 @@ export function Calendar() {
     return (
       <div>
         This is a coach!
-        <CalendarView/>
+        <CalendarView users={users}/>
       </div>
     )
   }

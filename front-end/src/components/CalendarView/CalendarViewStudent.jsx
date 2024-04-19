@@ -44,13 +44,12 @@ export function CalendarViewStudent({ users }) {
   const { id } = useParams();
 
   useEffect(() => {
-    fetchSlots({ status: "available", student_id: id }).then((data) => {
+    fetchSlots({ student_id: id }).then((data) => {
       setFetchedEvents(data);
     });
   }, []);
 
   const createEvents = () => {
-    console.log("fetchedEvents!!!, ", fetchedEvents);
     return fetchedEvents.map((e) => ({
       id: e.id,
       start: moment(e.start_time).toDate(),
@@ -58,6 +57,7 @@ export function CalendarViewStudent({ users }) {
       title: `${users[e.coach_id]?.name}`,
       status: e.status,
       coach: users[e.coach_id],
+      student: users[e.student_id]
     }));
   };
 
@@ -73,8 +73,6 @@ export function CalendarViewStudent({ users }) {
   };
 
   const handleSubmit = (e) => {
-    console.log("bro submitted it!! ");
-    console.log("whats the timeslot data? ", timeslotData);
     updateSlotWithStudent(currentUser, timeslotData.id).then((e) => {
       const newEvents = fetchedEvents.map((slot) => {
         if (slot.id === e.id) return e;
@@ -120,7 +118,7 @@ export function CalendarViewStudent({ users }) {
         </>
       );
     }
-    const { coach } = timeslotData;
+    const { coach, student } = timeslotData;
     return (
       <>
         <DialogHeader>
@@ -134,7 +132,15 @@ export function CalendarViewStudent({ users }) {
               You'll be meeting with {coach.name} at{" "}
               {formatDate(timeslotData.start)}.
             </p>
-            <p>Please call {coach.phone_number} when you're ready</p>
+            <p>Here are the phone numbers for the meetings:</p>
+            <b>
+              <p>
+                Coach -- {coach.name}: {coach.phone_number}
+              </p>
+              <p>
+                Student -- {student.name}: {student.phone_number}
+              </p>
+            </b>
           </div>
         </div>
       </>
