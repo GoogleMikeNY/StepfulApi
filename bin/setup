@@ -33,4 +33,9 @@ FileUtils.chdir APP_ROOT do
 
   puts "\n== Running npm install =="
   system! "npm --prefix ./front-end install"
+
+  unless File.exist?("./front-end/.env.development")
+    puts "\n== adding .env.development =="
+    FileUtils.cp("./front-end/.env.development.sample", "./front-end/.env.development")
+  end
 end
