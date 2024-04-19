@@ -5,7 +5,7 @@ Stepful is getting too busy! We have hundreds of 1-on-1 coaching calls between o
 Pre-requesites: 
 - Ruby 3.3.0
 - Node v20
-- mysql (gem "sqlite3")
+- sqlite (gem "sqlite3")
 
  **One can run `./bin/setup` in the root of the project to set up the app. This should set up the DB, 
  and install all node packages needed.**
@@ -31,21 +31,28 @@ Note: Coaches will not see other coaches availability.
 In the student view, we should see every coach that has an availability.
 
 ![view from the student](student-view.png)
+
 The student can see that two different coaches created some availability.
 
 ![img_1.png](student-booked.png)
+
 When a student has taken a slot, they can then check their availability information, including the phone number.
 
 ![img_1.png](another-student-view.png)
+
 When a different student goes to their view, they will not see slots that other users have confirmed.
 
 ![img_1.png](booked-view-coach.png)
+
 When a coach has met the student, they can leave a review! 
 
 ![img_1.png](meeting-review.png)
+
 After the initial review, the coach will not be able to edit their notes.
 
 ## Decisions: 
+### No tests
+It pains me that this app was made with no tests, but I don't think I would've completed the 3hr time limit while test driving the application
 ### Using Vite vs Shakapacker Gem
 While I had some issues with scaffolding the app using Shakapacker, I resulted in creating a new vite project within the rails codebase.
 If I had more time, I would do my best to iron this out.
