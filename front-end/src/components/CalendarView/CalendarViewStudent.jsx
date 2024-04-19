@@ -61,13 +61,12 @@ export function CalendarViewStudent({ users }) {
     }));
   };
 
-  const handleSelectEvent = (timeslotData) => {
+  const handleSelectEvent = (selectedTimeslotData) => {
     setDisplayDialog(true);
-    setTimeslotData(timeslotData);
+    setTimeslotData(selectedTimeslotData);
   };
 
   const handleClose = () => {
-    console.log("closing the thing");
     setDisplayDialog(false);
     setTimeslotData({});
   };
@@ -84,7 +83,6 @@ export function CalendarViewStudent({ users }) {
   };
 
   const handleViewChange = (vc) => {
-    console.log("what is VC: ", vc);
     setView(vc);
   };
 

@@ -71,16 +71,16 @@ export function CalendarView({ users }) {
       status: e.status,
       coach: users[e.coach_id],
       student: users[e.student_id],
+      resourceId: e.id
     }));
   };
 
-  const handleSelectEvent = (timeslotData) => {
+  const handleSelectEvent = (selectedTimeslotData) => {
     setDisplayDialog(true);
-    setTimeslotData(timeslotData);
+    setTimeslotData(selectedTimeslotData);
   };
 
   const handleClose = () => {
-    console.log("closing the thing");
     setDisplayDialog(false);
     setTimeslotData({});
   };
@@ -97,14 +97,12 @@ export function CalendarView({ users }) {
   }
 
   const handleSelectSlot = (p) => {
-    console.log("WHAT IS P within handleSelect!!: ", p);
     if (view === "month") {
       setView("week");
       setDate(moment(p.start));
     } else {
       p.end = moment(new Date(p.start)).add(2, "hour").toDate();
-      p.status = 'available'
-      debugger;
+      p.status = 'new'
       setTimeslotData(p);
       setDisplayDialog(true);
     }
@@ -119,8 +117,7 @@ export function CalendarView({ users }) {
   };
 
   const printDialogContent = () => {
-    debugger;
-    if (timeslotData.status === "available") {
+    if (timeslotData.status === "new") {
       return (
         <DialogContent className="max-w-screen-md">
           <DialogHeader>
@@ -148,6 +145,32 @@ export function CalendarView({ users }) {
           </DialogFooter>
         </DialogContent>
       );
+    }
+    if (timeslotData.status === "available") {
+      return (
+        <DialogContent className="max-w-screen-md">
+          <DialogHeader>
+            <DialogTitle>Create Booking</DialogTitle>
+            <DialogDescription>Create Booking Timeslot</DialogDescription>
+          </DialogHeader>
+          <div className="flex items-center space-x-2">
+            <div className="grid">
+              Booking:
+              <p>
+                Block of time: {formatDate(timeslotData.start)} -{" "}
+                {formatDate(timeslotData.end)}
+              </p>
+            </div>
+          </div>
+          <DialogFooter className="sm:justify-end">
+            <DialogClose asChild>
+              <Button type="button" variant="secondary">
+                Close
+              </Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+        )
     }
     const { coach, student } = timeslotData;
     return (
