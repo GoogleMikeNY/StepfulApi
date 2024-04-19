@@ -19,41 +19,13 @@ import {
 } from "@/components/ui/dialog";
 import { formatDate } from "@/helpers/DateHelper.js";
 import { createNewBooking, fetchSlots } from "@/api/bookings.js";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu.jsx";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select.jsx";
-import { Textarea } from "@/components/ui/textarea.jsx";
-import {createNewMeetingReview} from "@/api/meetingReviews.js";
+import { createNewMeetingReview } from "@/api/meetingReviews.js";
 
-/*
- *
- * fetchSlots: fetchOnlySlotsPertainingToThemselves | fetchAllCoachSlots
- * handleSelectEvent: noop | opens information about the booking and check if there's an issue.
- * handleSubmit? createNewBooking | UpdateBookingToBeTaken By the student
- * handleSelect: ChangeView | noop
- * handleViewChange: ChangeDate | noop
- * handleOnNavigate: Debugger? | debugger?
- *
- *
- * */
 export function CalendarView({ users }) {
   const [view, setView] = useState("month");
   const [meetingReviewRating, setMeetingReviewRating] = useState("");
   const [date, setDate] = useState(moment());
-  const [meetingReviewNotes, setMeetingReviewNotes] = useState("")
+  const [meetingReviewNotes, setMeetingReviewNotes] = useState("");
   const [displayDialog, setDisplayDialog] = useState(false);
   const [timeslotData, setTimeslotData] = useState({});
   const [fetchedEvents, setFetchedEvents] = useState([]);
@@ -74,6 +46,7 @@ export function CalendarView({ users }) {
       status: e.status,
       coach: users[e.coach_id],
       student: users[e.student_id],
+      meetingReview: e.meeting_review,
       resourceId: e.id,
     }));
   };
@@ -96,16 +69,19 @@ export function CalendarView({ users }) {
   };
 
   const handleCreateReviewForMeeting = () => {
-    const {id: slotId} = timeslotData
+    const { id: slotId } = timeslotData;
     createNewMeetingReview(slotId, {
       meetingReviewRating,
       meetingReviewNotes,
     }).then((data) => {
       const newEvents = fetchedEvents.map((slot) => {
-        if (slot.id === data.slot_id) return slot;
+        if (slot.id === data.slot_id) {
+          slot.meeting_review = data;
+        }
         return slot;
       });
       setFetchedEvents(newEvents);
+      createEvents()
     });
     handleClose();
   };
@@ -187,6 +163,7 @@ export function CalendarView({ users }) {
       );
     }
     const { coach, student } = timeslotData;
+    console.log(timeslotData)
     return (
       <DialogContent className="max-w-screen-sm">
         <DialogHeader>
@@ -217,15 +194,15 @@ export function CalendarView({ users }) {
               with {timeslotData?.student?.name}.
             </p>
             <div className="flex mt-4 justify-between">
-              <div className='w-1/2'>
+              <div className="w-1/2">
                 <label>
                   Select rating of the meeting
                   <select
                     className="border-2 py-2"
-                    value={meetingReviewRating} // ...force the select's value to match the state variable...
+                    value={timeslotData.meetingReview?.rating} // ...force the select's value to match the state variable...
+                    disabled={!!timeslotData.meetingReview}
                     onChange={(e) => setMeetingReviewRating(e.target.value)} // ... and update the state variable on any change!
                   >
-                    <option value="0">N/A -- Didn't meet with Student.</option>
                     <option value="1">Very Dissatisfied</option>
                     <option value="2">Dissatisfied</option>
                     <option value="3">Neutral</option>
@@ -234,10 +211,15 @@ export function CalendarView({ users }) {
                   </select>
                 </label>
               </div>
-              <div className='w-1/2'>
+              <div className="w-1/2">
                 <label>
                   Notes:
-                  <textarea value={meetingReviewNotes} onChange={e => setMeetingReviewNotes(e.target.value)} className="border-2 w-full" />
+                  <textarea
+                    value={timeslotData.meetingReview?.notes}
+                    disabled={!!timeslotData.meetingReview}
+                    onChange={(e) => setMeetingReviewNotes(e.target.value)}
+                    className="border-2 w-full"
+                  />
                 </label>
               </div>
             </div>

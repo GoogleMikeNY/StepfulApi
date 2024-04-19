@@ -22,7 +22,7 @@ class Api::V1::SlotsController < ApplicationController
     @slot = Slot.new(slot_params)
 
     if @slot.save
-      render json: @slot, status: :created, location: @slot
+      render json: @slot, status: :created, location: @slot, include: meeting_review
     else
       render json: @slot.errors, status: :unprocessable_entity
     end
