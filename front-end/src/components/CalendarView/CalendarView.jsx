@@ -7,19 +7,12 @@ import { useEffect, useState } from "react";
 
 const localizer = momentLocalizer(moment);
 
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
 } from "@/components/ui/dialog";
-import { formatDate } from "@/helpers/DateHelper.js";
 import { createNewBooking, fetchSlots } from "@/api/bookings.js";
 import { createNewMeetingReview } from "@/api/meetingReviews.js";
+import { DialogTemplate } from "@/components/CalendarView/DialogTemplate.jsx";
 
 export function CalendarView({ users }) {
   const [view, setView] = useState("month");
@@ -61,15 +54,16 @@ export function CalendarView({ users }) {
     setTimeslotData({});
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (timeslotData) => {
+    debugger;
     createNewBooking(id, timeslotData).then((e) =>
       setFetchedEvents([...fetchedEvents, e]),
     );
     handleClose();
   };
 
-  const handleCreateReviewForMeeting = () => {
-    const { id: slotId } = timeslotData;
+  const handleCreateReviewForMeeting = (selectedTimeslotData) => {
+    const { id: slotId } = selectedTimeslotData;
     createNewMeetingReview(slotId, {
       meetingReviewRating,
       meetingReviewNotes,
@@ -81,7 +75,7 @@ export function CalendarView({ users }) {
         return slot;
       });
       setFetchedEvents(newEvents);
-      createEvents()
+      createEvents();
     });
     handleClose();
   };
@@ -109,137 +103,36 @@ export function CalendarView({ users }) {
   const printDialogContent = () => {
     if (timeslotData.status === "new") {
       return (
-        <DialogContent className="max-w-screen-md">
-          <DialogHeader>
-            <DialogTitle>Create Booking</DialogTitle>
-            <DialogDescription>Create Booking Timeslot</DialogDescription>
-          </DialogHeader>
-          <div className="flex items-center space-x-2">
-            <div className="grid">
-              Booking:
-              <p>
-                Block of time: {formatDate(timeslotData.start)} -{" "}
-                {formatDate(timeslotData.end)}
-              </p>
-            </div>
-          </div>
-          <DialogFooter className="sm:justify-end">
-            <DialogClose asChild>
-              <Button type="button" variant="secondary">
-                Close
-              </Button>
-            </DialogClose>
-            <Button type="submit" onClick={handleSubmit}>
-              Submit
-            </Button>
-          </DialogFooter>
-        </DialogContent>
+        <DialogTemplate
+          timeslotData={timeslotData}
+          handleSubmit={handleSubmit}
+          allowSubmit={true}
+          useBookedSlotTemplate={false}
+        />
       );
     }
+
     if (timeslotData.status === "available") {
       return (
-        <DialogContent className="max-w-screen-md">
-          <DialogHeader>
-            <DialogTitle>Create Booking</DialogTitle>
-            <DialogDescription>Create Booking Timeslot</DialogDescription>
-          </DialogHeader>
-          <div className="flex items-center space-x-2">
-            <div className="grid">
-              Booking:
-              <p>
-                Block of time: {formatDate(timeslotData.start)} -{" "}
-                {formatDate(timeslotData.end)}
-              </p>
-            </div>
-          </div>
-          <DialogFooter className="sm:justify-end">
-            <DialogClose asChild>
-              <Button type="button" variant="secondary">
-                Close
-              </Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
+        <DialogTemplate
+          timeslotData={timeslotData}
+          handleSubmit={null}
+          allowSubmit={false}
+          useBookedSlotTemplate={false}
+        />
       );
     }
-    const { coach, student } = timeslotData;
-    console.log(timeslotData)
     return (
-      <DialogContent className="max-w-screen-sm">
-        <DialogHeader>
-          <DialogTitle>Booked Slot!</DialogTitle>
-          <DialogDescription>Describing booked slot</DialogDescription>
-        </DialogHeader>
-        <div className="flex space-x-2 justify-between">
-          <div className="grid">
-            Booked Slot:
-            <p>
-              This session is in the books with {timeslotData.student?.name}!
-              following block of time:
-            </p>
-            <p>
-              {formatDate(timeslotData.start)} - {formatDate(timeslotData.end)}
-            </p>
-            <p>Here are the phone numbers for the meetings:</p>
-            <b>
-              <p>
-                Coach -- {coach?.name}: {coach?.phone_number}
-              </p>
-              <p>
-                Student -- {student?.name}: {student?.phone_number}
-              </p>
-            </b>
-            <p>
-              If this meeting has occurred, please rate the following session
-              with {timeslotData?.student?.name}.
-            </p>
-            <div className="flex mt-4 justify-between">
-              <div className="w-1/2">
-                <label>
-                  Select rating of the meeting
-                  <select
-                    className="border-2 py-2"
-                    value={timeslotData.meetingReview?.rating} // ...force the select's value to match the state variable...
-                    disabled={!!timeslotData.meetingReview}
-                    onChange={(e) => setMeetingReviewRating(e.target.value)} // ... and update the state variable on any change!
-                  >
-                    <option value="1">Very Dissatisfied</option>
-                    <option value="2">Dissatisfied</option>
-                    <option value="3">Neutral</option>
-                    <option value="4">Satisfied</option>
-                    <option value="5">Very Satisfied</option>
-                  </select>
-                </label>
-              </div>
-              <div className="w-1/2">
-                <label>
-                  Notes:
-                  <textarea
-                    value={timeslotData.meetingReview?.notes}
-                    disabled={!!timeslotData.meetingReview}
-                    onChange={(e) => setMeetingReviewNotes(e.target.value)}
-                    className="border-2 w-full"
-                  />
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-        <DialogFooter className="sm:justify-end">
-          <DialogClose asChild>
-            <Button type="button" variant="secondary">
-              Close
-            </Button>
-          </DialogClose>
-          <Button type="submit" onClick={handleCreateReviewForMeeting}>
-            Submit
-          </Button>
-        </DialogFooter>
-      </DialogContent>
+      <DialogTemplate
+        timeslotData={timeslotData}
+        handleSubmit={handleCreateReviewForMeeting}
+        allowSubmit={true}
+        useBookedSlotTemplate={true}
+        setMeetingReviewNotes={setMeetingReviewNotes}
+        setMeetingReviewRating={setMeetingReviewRating}
+      />
     );
   };
-
-  const currentUser = users[id];
 
   return (
     <div className="w-full">
