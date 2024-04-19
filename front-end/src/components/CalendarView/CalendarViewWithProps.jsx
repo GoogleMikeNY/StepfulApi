@@ -30,7 +30,7 @@ import {createNewBooking, fetchSlots} from "@/api/bookings.js";
 *
 *
 * */
-export function CalendarView() {
+export function CalendarViewWithProps() {
   const [view, setView] = useState("month");
   const [date, setDate] = useState(moment())
   const [displayDialog, setDisplayDialog] = useState(false);
@@ -63,7 +63,7 @@ export function CalendarView() {
     setTimeslotData({})
   }
 
-  const handleSubmit = e => {
+  const handleFormSubmit = e => {
     console.log('bro submitted it!! ')
     console.log('whats the timeslot data? ', timeslotData)
     createNewBooking(id, timeslotData).then(e => setFetchedEvents([...fetchedEvents, e]))
@@ -137,7 +137,7 @@ export function CalendarView() {
                     Close
                   </Button>
                 </DialogClose>
-                <Button type='submit' onClick={handleSubmit}>
+                <Button type='submit' onClick={handleFormSubmit}>
                   Submit
                 </Button>
               </DialogFooter>

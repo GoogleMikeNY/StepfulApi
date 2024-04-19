@@ -7,6 +7,7 @@ import {
 import App from './App.jsx'
 import './index.css'
 import {CalendarView} from "@/components/CalendarView/CalendarView.jsx";
+import {Calendar} from "@/components/Calendar/Calendar.jsx"
 
 const router = createBrowserRouter([
     {
@@ -14,7 +15,7 @@ const router = createBrowserRouter([
         element: <Navigate to={"/users/1"}/>
     }, {
         path: "/users/:id",
-        element: <CalendarView />
+        element: <div><Calendar/><CalendarView /></div>
 
     }
 ])

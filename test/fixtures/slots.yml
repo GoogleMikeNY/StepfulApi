@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  coach_id: 1
+  start_time: 2024-04-16 10:54:55
+  end_time: 2024-04-16 10:54:55
+  student_id: 1
+  status: MyString
+
+two:
+  coach_id: 1
+  start_time: 2024-04-16 10:54:55
+  end_time: 2024-04-16 10:54:55
+  student_id: 1
+  status: MyString

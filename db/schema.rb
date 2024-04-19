@@ -10,7 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_04_16_022241) do
+ActiveRecord::Schema[7.1].define(version: 2024_04_16_145455) do
+  create_table "slots", force: :cascade do |t|
+    t.integer "coach_id", null: false
+    t.datetime "start_time", null: false
+    t.datetime "end_time"
+    t.integer "student_id"
+    t.integer "status", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["coach_id"], name: "index_slots_on_coach_id"
+    t.index ["student_id"], name: "index_slots_on_student_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "name"
     t.string "phone_number"
@@ -20,4 +32,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_16_022241) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "slots", "users", column: "coach_id"
+  add_foreign_key "slots", "users", column: "student_id"
 end
