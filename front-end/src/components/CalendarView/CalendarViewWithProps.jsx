@@ -30,7 +30,7 @@ import {createNewBooking, fetchSlots} from "@/api/bookings.js";
 *
 *
 * */
-export function CalendarViewWithProps() {
+export function CalendarViewWithProps({fetchSlots, handleSelectEvent, handleSubmit, handleSelectSlot}) {
   const [view, setView] = useState("month");
   const [date, setDate] = useState(moment())
   const [displayDialog, setDisplayDialog] = useState(false);
@@ -42,9 +42,10 @@ export function CalendarViewWithProps() {
     fetchSlots().then((data) => {
       setFetchedEvents(data)
     });
-  }, []);
+  }, [fetchSlots]);
 
   const createEvents = () => {
+    console.log('fetchedEvents', fetchedEvents)
     return fetchedEvents.map(e => ({
       start: moment(e.start_time).toDate(),
       end: moment(e.end_time).toDate(),
@@ -52,9 +53,10 @@ export function CalendarViewWithProps() {
     }))
   }
 
-  const handleSelectEvent = (p) => {
+  const handleFormSelectEvent = (p) => {
     console.log("WHAT IS P: ", p);
     console.log("A student will probably utilize this to book an appointment!")
+    handleSelectEvent();
   };
 
   const handleClose = () => {
@@ -63,24 +65,14 @@ export function CalendarViewWithProps() {
     setTimeslotData({})
   }
 
-  const handleFormSubmit = e => {
-    console.log('bro submitted it!! ')
-    console.log('whats the timeslot data? ', timeslotData)
-    createNewBooking(id, timeslotData).then(e => setFetchedEvents([...fetchedEvents, e]))
+  const handleFormSubmit = () => {
+    handleSubmit(id, timeslotData).then(e => setFetchedEvents([...fetchedEvents, e]))
+    console.log('handle form submit close')
     handleClose()
   }
 
-  const handleSelectSlot = (p) => {
-    console.log("WHAT IS P within handleSelect!!: ", p);
-    if (view === "month") {
-      setView("week");
-      setDate(moment(p.start))
-    } else {
-      console.log('P is a thing: ', p)
-      p.end = moment(new Date(p.start)).add(2, 'hour').toDate()
-      setTimeslotData(p)
-      setDisplayDialog(true);
-    }
+  const handleFormSelectSlot = (date) => {
+    handleSelectSlot(date, view, {setView, setDate, setTimeslotData, setDisplayDialog})
   };
 
   const handleViewChange = (vc) => {
@@ -88,8 +80,8 @@ export function CalendarViewWithProps() {
     setView(vc);
   };
 
-  const handleOnNavigate = () => {
-    debugger;
+  const handleOnNavigate = (e) => {
+    setDate(moment(e))
   }
 
   return (
@@ -106,8 +98,8 @@ export function CalendarViewWithProps() {
             startAccessor="start"
             endAccessor="end"
             style={{ height: 700 }}
-            onSelectEvent={handleSelectEvent}
-            onSelectSlot={handleSelectSlot}
+            onSelectEvent={handleFormSelectEvent}
+            onSelectSlot={handleFormSelectSlot}
             onView={handleViewChange}
             view={view}
             timeslots={2}

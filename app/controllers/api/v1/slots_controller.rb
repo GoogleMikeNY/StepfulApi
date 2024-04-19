@@ -3,7 +3,12 @@ class Api::V1::SlotsController < ApplicationController
 
   # GET /slots
   def index
-    @slots = Slot.all
+    if params[:student_id]
+      @slots = Slot.available_or_student(params[:student_id])
+    else
+      @slots = Slot.all
+    end
+    @slots = @slots.where(coach_id: params[:coach_id]) if params[:coach_id].present?
 
     render json: @slots
   end
@@ -27,6 +32,7 @@ class Api::V1::SlotsController < ApplicationController
   # PATCH/PUT /slots/1
   def update
     if @slot.update(slot_params)
+      p @slot
       render json: @slot
     else
       render json: @slot.errors, status: :unprocessable_entity

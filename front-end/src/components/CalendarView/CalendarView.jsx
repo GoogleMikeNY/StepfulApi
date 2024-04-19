@@ -39,7 +39,7 @@ export function CalendarView() {
   const { id } = useParams();
 
   useEffect(() => {
-    fetchSlots().then((data) => {
+    fetchSlots({coach_id: id}).then((data) => {
       setFetchedEvents(data)
     });
   }, []);

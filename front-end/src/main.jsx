@@ -15,7 +15,7 @@ const router = createBrowserRouter([
         element: <Navigate to={"/users/1"}/>
     }, {
         path: "/users/:id",
-        element: <div><Calendar/><CalendarView /></div>
+        element: <Calendar/>
 
     }
 ])
