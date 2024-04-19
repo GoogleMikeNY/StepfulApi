@@ -9,8 +9,7 @@ class Api::V1::SlotsController < ApplicationController
       @slots = Slot.all
     end
     @slots = @slots.where(coach_id: params[:coach_id]) if params[:coach_id].present?
-
-    render json: @slots
+    render json: @slots, include: :meeting_review
   end
 
   # GET /slots/1

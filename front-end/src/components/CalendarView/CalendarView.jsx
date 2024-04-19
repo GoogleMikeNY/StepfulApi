@@ -36,6 +36,7 @@ import {
   SelectValue,
 } from "@/components/ui/select.jsx";
 import { Textarea } from "@/components/ui/textarea.jsx";
+import {createNewMeetingReview} from "@/api/meetingReviews.js";
 
 /*
  *
@@ -50,7 +51,9 @@ import { Textarea } from "@/components/ui/textarea.jsx";
  * */
 export function CalendarView({ users }) {
   const [view, setView] = useState("month");
+  const [meetingReviewRating, setMeetingReviewRating] = useState("");
   const [date, setDate] = useState(moment());
+  const [meetingReviewNotes, setMeetingReviewNotes] = useState("")
   const [displayDialog, setDisplayDialog] = useState(false);
   const [timeslotData, setTimeslotData] = useState({});
   const [fetchedEvents, setFetchedEvents] = useState([]);
@@ -71,7 +74,7 @@ export function CalendarView({ users }) {
       status: e.status,
       coach: users[e.coach_id],
       student: users[e.student_id],
-      resourceId: e.id
+      resourceId: e.id,
     }));
   };
 
@@ -93,8 +96,19 @@ export function CalendarView({ users }) {
   };
 
   const handleCreateReviewForMeeting = () => {
+    const {id: slotId} = timeslotData
+    createNewMeetingReview(slotId, {
+      meetingReviewRating,
+      meetingReviewNotes,
+    }).then((data) => {
+      const newEvents = fetchedEvents.map((slot) => {
+        if (slot.id === data.slot_id) return slot;
+        return slot;
+      });
+      setFetchedEvents(newEvents);
+    });
     handleClose();
-  }
+  };
 
   const handleSelectSlot = (p) => {
     if (view === "month") {
@@ -102,7 +116,7 @@ export function CalendarView({ users }) {
       setDate(moment(p.start));
     } else {
       p.end = moment(new Date(p.start)).add(2, "hour").toDate();
-      p.status = 'new'
+      p.status = "new";
       setTimeslotData(p);
       setDisplayDialog(true);
     }
@@ -170,72 +184,76 @@ export function CalendarView({ users }) {
             </DialogClose>
           </DialogFooter>
         </DialogContent>
-        )
+      );
     }
     const { coach, student } = timeslotData;
     return (
-        <DialogContent className="max-w-screen-md">
-          <DialogHeader>
-            <DialogTitle>Booked Slot!</DialogTitle>
-            <DialogDescription>Describing booked slot</DialogDescription>
-          </DialogHeader>
-          <div className="flex space-x-2 justify-between">
-            <div className="grid">
-              Booked Slot:
+      <DialogContent className="max-w-screen-sm">
+        <DialogHeader>
+          <DialogTitle>Booked Slot!</DialogTitle>
+          <DialogDescription>Describing booked slot</DialogDescription>
+        </DialogHeader>
+        <div className="flex space-x-2 justify-between">
+          <div className="grid">
+            Booked Slot:
+            <p>
+              This session is in the books with {timeslotData.student?.name}!
+              following block of time:
+            </p>
+            <p>
+              {formatDate(timeslotData.start)} - {formatDate(timeslotData.end)}
+            </p>
+            <p>Here are the phone numbers for the meetings:</p>
+            <b>
               <p>
-                This session is in the books with {timeslotData.student?.name}!
-                following block of time:
+                Coach -- {coach?.name}: {coach?.phone_number}
               </p>
               <p>
-                {formatDate(timeslotData.start)} -{" "}
-                {formatDate(timeslotData.end)}
+                Student -- {student?.name}: {student?.phone_number}
               </p>
-              <p>Here are the phone numbers for the meetings:</p>
-              <b>
-                <p>
-                  Coach -- {coach?.name}: {coach?.phone_number}
-                </p>
-                <p>
-                  Student -- {student?.name}: {student?.phone_number}
-                </p>
-              </b>
-              <p>
-                If this meeting has occurred, please rate the following session
-                with {timeslotData?.student?.name}.
-              </p>
-              <div className="flex mt-4">
-                <Select>
-                  <SelectTrigger className="w-[300px]">
-                    <SelectValue placeholder="Meeting Rating" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="0">
-                        N/A -- Didn't meet with Student.
-                      </SelectItem>
-                      <SelectItem value="1">Very Dissatisfied</SelectItem>
-                      <SelectItem value="2">Dissatisfied</SelectItem>
-                      <SelectItem value="3">Neutral</SelectItem>
-                      <SelectItem value="4">Satisfied</SelectItem>
-                      <SelectItem value="5">Very Satisfied</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                <Textarea className="ml-6" />
+            </b>
+            <p>
+              If this meeting has occurred, please rate the following session
+              with {timeslotData?.student?.name}.
+            </p>
+            <div className="flex mt-4 justify-between">
+              <div className='w-1/2'>
+                <label>
+                  Select rating of the meeting
+                  <select
+                    className="border-2 py-2"
+                    value={meetingReviewRating} // ...force the select's value to match the state variable...
+                    onChange={(e) => setMeetingReviewRating(e.target.value)} // ... and update the state variable on any change!
+                  >
+                    <option value="0">N/A -- Didn't meet with Student.</option>
+                    <option value="1">Very Dissatisfied</option>
+                    <option value="2">Dissatisfied</option>
+                    <option value="3">Neutral</option>
+                    <option value="4">Satisfied</option>
+                    <option value="5">Very Satisfied</option>
+                  </select>
+                </label>
+              </div>
+              <div className='w-1/2'>
+                <label>
+                  Notes:
+                  <textarea value={meetingReviewNotes} onChange={e => setMeetingReviewNotes(e.target.value)} className="border-2 w-full" />
+                </label>
               </div>
             </div>
           </div>
-          <DialogFooter className="sm:justify-end">
-            <DialogClose asChild>
-              <Button type="button" variant="secondary">
-                Close
-              </Button>
-            </DialogClose>
-            <Button type="submit" onClick={handleCreateReviewForMeeting}>
-              Submit
+        </div>
+        <DialogFooter className="sm:justify-end">
+          <DialogClose asChild>
+            <Button type="button" variant="secondary">
+              Close
             </Button>
-          </DialogFooter>
-        </DialogContent>
+          </DialogClose>
+          <Button type="submit" onClick={handleCreateReviewForMeeting}>
+            Submit
+          </Button>
+        </DialogFooter>
+      </DialogContent>
     );
   };
 

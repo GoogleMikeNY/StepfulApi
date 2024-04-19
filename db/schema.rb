@@ -10,7 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_04_16_145455) do
+ActiveRecord::Schema[7.1].define(version: 2024_04_18_143600) do
+  create_table "meeting_reviews", force: :cascade do |t|
+    t.integer "rating"
+    t.text "notes"
+    t.integer "slot_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["slot_id"], name: "index_meeting_reviews_on_slot_id"
+  end
+
   create_table "slots", force: :cascade do |t|
     t.integer "coach_id", null: false
     t.datetime "start_time", null: false
@@ -32,6 +41,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_16_145455) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "meeting_reviews", "slots"
   add_foreign_key "slots", "users", column: "coach_id"
   add_foreign_key "slots", "users", column: "student_id"
 end

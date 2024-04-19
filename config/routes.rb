@@ -1,9 +1,11 @@
 Rails.application.routes.draw do
+  resources :meeting_reviews
   resources :slots
   namespace :api do
     namespace :v1 do
       resources :users
       resources :slots
+      resources :meeting_reviews
     end
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
