@@ -8,7 +8,7 @@ import {Button} from "@/components/ui/button";
 import {Dialog, DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle,} from "@/components/ui/dialog";
 import {formatDate} from "@/helpers/DateHelper.js";
 import {fetchSlots, updateSlotWithStudent,} from "@/api/slots.js";
-import {DialogTemplateWithChildren} from "@/components/CalendarView/DialogTemplateWithChildren.jsx";
+import {DialogTemplate} from "@/components/CalendarView/DialogTemplate.jsx";
 
 const localizer = momentLocalizer(moment);
 
@@ -71,7 +71,7 @@ export function CalendarViewStudent({users}) {
   const printDialogContent = () => {
     if (timeslotData.status === "available") {
       return (
-        <DialogTemplateWithChildren>
+        <DialogTemplate>
           <DialogHeader>
             <DialogTitle>Confirm Booking Slot</DialogTitle>
             <DialogDescription>Confirm Booking Timeslot</DialogDescription>
@@ -100,13 +100,13 @@ export function CalendarViewStudent({users}) {
               Submit
             </Button>
           </DialogFooter>
-        </DialogTemplateWithChildren>
+        </DialogTemplate>
       );
     }
     const {coach, student} = timeslotData;
 
     return (
-      <DialogTemplateWithChildren>
+      <DialogTemplate>
         <DialogHeader>
           <DialogTitle>Confirm Booking Slot</DialogTitle>
           <DialogDescription>Confirm Booking Timeslot</DialogDescription>
@@ -136,7 +136,7 @@ export function CalendarViewStudent({users}) {
             </Button>
           </DialogClose>
         </DialogFooter>
-      </DialogTemplateWithChildren>
+      </DialogTemplate>
     );
   };
 

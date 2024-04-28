@@ -17,6 +17,10 @@ const router = createBrowserRouter([
     path: "/users/:id",
     element: <Calendar />,
   },
+  {
+    path: "*",
+    element: <Home />,
+  }
 ]);
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

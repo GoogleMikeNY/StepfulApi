@@ -7,7 +7,7 @@ import {useEffect, useState} from "react";
 import {Dialog, DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle,} from "@/components/ui/dialog";
 import {createNewSlot, fetchSlots} from "@/api/slots.js";
 import {createNewMeetingReview} from "@/api/meetingReviews.js";
-import {DialogTemplateWithChildren} from "@/components/CalendarView/DialogTemplateWithChildren.jsx"
+import {DialogTemplate} from "@/components/CalendarView/DialogTemplate.jsx"
 import {addTwoHoursToStart, formatDate} from "@/helpers/DateHelper.js";
 import {Button} from "@/components/ui/button.jsx";
 
@@ -101,7 +101,7 @@ export function CalendarViewCoach({users}) {
   const printDialogContent = () => {
     if (timeslotData.status === "new") {
       return (
-        <DialogTemplateWithChildren>
+        <DialogTemplate>
           <DialogHeader>
             <DialogTitle>Create Booking</DialogTitle>
             <DialogDescription>Create Booking Timeslot</DialogDescription>
@@ -125,13 +125,13 @@ export function CalendarViewCoach({users}) {
               Submit
             </Button>
           </DialogFooter>
-        </DialogTemplateWithChildren>
+        </DialogTemplate>
       );
     }
 
     if (timeslotData.status === "available") {
       return (
-        <DialogTemplateWithChildren>
+        <DialogTemplate>
           <DialogHeader>
             <DialogTitle>Create Booking</DialogTitle>
             <DialogDescription>Create Booking Timeslot</DialogDescription>
@@ -152,12 +152,12 @@ export function CalendarViewCoach({users}) {
               </Button>
             </DialogClose>
           </DialogFooter>
-        </DialogTemplateWithChildren>
+        </DialogTemplate>
       );
     }
     const {coach, student} = timeslotData;
     return (
-      <DialogTemplateWithChildren>
+      <DialogTemplate>
         <DialogHeader>
           <DialogTitle>Booked Slot!</DialogTitle>
           <DialogDescription>Describing booked slot</DialogDescription>
@@ -227,7 +227,7 @@ export function CalendarViewCoach({users}) {
             Submit
           </Button>
         </DialogFooter>
-      </DialogTemplateWithChildren>
+      </DialogTemplate>
     );
   };
   const currentUser = users[id]
