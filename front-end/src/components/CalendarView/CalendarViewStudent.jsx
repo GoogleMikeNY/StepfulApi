@@ -59,7 +59,7 @@ export function CalendarViewStudent({ users }) {
     setTimeslotData({});
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = () => {
     updateSlotWithStudent(currentUser, timeslotData.id).then((e) => {
       const newEvents = fetchedEvents.map((slot) => {
         if (slot.id === e.id) return e;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getUsers } from "@/api/users.js";
-import { Link, Navigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { CalendarViewCoach } from "@/components/CalendarView/CalendarViewCoach.jsx";
 import { CalendarViewStudent } from "@/components/CalendarView/CalendarViewStudent.jsx";
 

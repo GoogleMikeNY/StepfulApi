@@ -4,9 +4,7 @@ import { Link } from "react-router-dom";
 
 export function Home() {
   const [users, setUsers] = useState({});
-  console.log('what?')
   useEffect(() => {
-    console.log('what?')
     getUsers().then(setUsers);
   }, []);
 
