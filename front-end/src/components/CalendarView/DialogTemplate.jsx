@@ -16,6 +16,7 @@ export function DialogTemplate({
   useBookedSlotTemplate,
   setMeetingReviewRating,
   setMeetingReviewNotes,
+  children
 }) {
   return (
     <DialogContent className="max-w-screen-md">

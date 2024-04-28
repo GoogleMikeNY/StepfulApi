@@ -1,21 +1,22 @@
-import { useParams } from "react-router-dom";
-import { Calendar, momentLocalizer } from "react-big-calendar";
+import {useParams} from "react-router-dom";
+import {Calendar, momentLocalizer} from "react-big-calendar";
 import moment from "moment";
 
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 
 const localizer = momentLocalizer(moment);
 
 import {
-  Dialog,
+  Dialog, DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
-import { createNewSlot, fetchSlots } from "@/api/slots.js";
-import { createNewMeetingReview } from "@/api/meetingReviews.js";
-import { DialogTemplate } from "@/components/CalendarView/DialogTemplate.jsx";
-import {addTwoHoursToStart} from "@/helpers/DateHelper.js";
+import {createNewSlot, fetchSlots} from "@/api/slots.js";
+import {createNewMeetingReview} from "@/api/meetingReviews.js";
+import {DialogTemplateWithChildren} from "@/components/CalendarView/DialogTemplateWithChildren.jsx"
+import {addTwoHoursToStart, formatDate} from "@/helpers/DateHelper.js";
+import {Button} from "@/components/ui/button.jsx";
 
-export function CalendarViewCoach({ users }) {
+export function CalendarViewCoach({users}) {
   const [view, setView] = useState("month");
   const [meetingReviewRating, setMeetingReviewRating] = useState("");
   const [date, setDate] = useState(moment());
@@ -23,10 +24,10 @@ export function CalendarViewCoach({ users }) {
   const [displayDialog, setDisplayDialog] = useState(false);
   const [timeslotData, setTimeslotData] = useState({});
   const [fetchedEvents, setFetchedEvents] = useState([]);
-  const { id } = useParams();
+  const {id} = useParams();
 
   useEffect(() => {
-    fetchSlots({ coach_id: id }).then((data) => {
+    fetchSlots({coach_id: id}).then((data) => {
       setFetchedEvents(data);
     });
   }, []);
@@ -63,7 +64,7 @@ export function CalendarViewCoach({ users }) {
   };
 
   const handleCreateReviewForMeeting = (selectedTimeslotData) => {
-    const { id: slotId } = selectedTimeslotData;
+    const {id: slotId} = selectedTimeslotData;
     createNewMeetingReview(slotId, {
       meetingReviewRating,
       meetingReviewNotes,
@@ -103,34 +104,133 @@ export function CalendarViewCoach({ users }) {
   const printDialogContent = () => {
     if (timeslotData.status === "new") {
       return (
-        <DialogTemplate
-          timeslotData={timeslotData}
-          handleSubmit={handleSubmit}
-          allowSubmit={true}
-          useBookedSlotTemplate={false}
-        />
+        <DialogTemplateWithChildren>
+          <DialogHeader>
+            <DialogTitle>Create Booking</DialogTitle>
+            <DialogDescription>Create Booking Timeslot</DialogDescription>
+          </DialogHeader>
+          <div className="flex items-center space-x-2">
+            <div className="grid">
+              Booking:
+              <p>
+                Block of time: {formatDate(timeslotData.start)} -{" "}
+                {formatDate(timeslotData.end)}
+              </p>
+            </div>
+          </div>
+          <DialogFooter className="sm:justify-end">
+            <DialogClose asChild>
+              <Button type="button" variant="secondary">
+                Close
+              </Button>
+            </DialogClose>
+            <Button type="submit" onClick={() => handleSubmit(timeslotData)}>
+              Submit
+            </Button>
+          </DialogFooter>
+        </DialogTemplateWithChildren>
       );
     }
 
     if (timeslotData.status === "available") {
       return (
-        <DialogTemplate
-          timeslotData={timeslotData}
-          handleSubmit={null}
-          allowSubmit={false}
-          useBookedSlotTemplate={false}
-        />
+        <DialogTemplateWithChildren>
+          <DialogHeader>
+            <DialogTitle>Create Booking</DialogTitle>
+            <DialogDescription>Create Booking Timeslot</DialogDescription>
+          </DialogHeader>
+          <div className="flex items-center space-x-2">
+            <div className="grid">
+              Booking:
+              <p>
+                Block of time: {formatDate(timeslotData.start)} -{" "}
+                {formatDate(timeslotData.end)}
+              </p>
+            </div>
+          </div>
+          <DialogFooter className="sm:justify-end">
+            <DialogClose asChild>
+              <Button type="button" variant="secondary">
+                Close
+              </Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogTemplateWithChildren>
       );
     }
+    const {coach, student} = timeslotData;
     return (
-      <DialogTemplate
-        timeslotData={timeslotData}
-        handleSubmit={handleCreateReviewForMeeting}
-        allowSubmit={true}
-        useBookedSlotTemplate={true}
-        setMeetingReviewNotes={setMeetingReviewNotes}
-        setMeetingReviewRating={setMeetingReviewRating}
-      />
+      <DialogTemplateWithChildren>
+        <DialogHeader>
+          <DialogTitle>Booked Slot!</DialogTitle>
+          <DialogDescription>Describing booked slot</DialogDescription>
+        </DialogHeader>
+        <div className="flex space-x-2 justify-between">
+          <div className="grid">
+            Booked Slot:
+            <p>
+              This session is in the books with {timeslotData.student?.name}!
+              following block of time:
+            </p>
+            <p>
+              {formatDate(timeslotData.start)} - {formatDate(timeslotData.end)}
+            </p>
+            <p>Here are the phone numbers for the meetings:</p>
+            <b>
+              <p>
+                Coach -- {coach?.name}: {coach?.phone_number}
+              </p>
+              <p>
+                Student -- {student?.name}: {student?.phone_number}
+              </p>
+            </b>
+            <p>
+              If this meeting has occurred, please rate the following session with{" "}
+              {timeslotData?.student?.name}.
+            </p>
+            <div className="flex mt-4 justify-between">
+              <div className="w-1/2">
+                <label>
+                  Select rating of the meeting
+                  <select
+                    className="border-2 py-2"
+                    value={timeslotData.meetingReview?.rating || ''} // ...force the select's value to match the state variable...
+                    disabled={!!timeslotData.meetingReview}
+                    onChange={(e) => setMeetingReviewRating(e.target.value)} // ... and update the state variable on any change!
+                  >
+                    <option value="1">Very Dissatisfied</option>
+                    <option value="2">Dissatisfied</option>
+                    <option value="3">Neutral</option>
+                    <option value="4">Satisfied</option>
+                    <option value="5">Very Satisfied</option>
+                  </select>
+                </label>
+              </div>
+              <div className="w-1/2">
+                <label>
+                  Notes:
+                  <textarea
+                    value={timeslotData.meetingReview?.notes}
+                    disabled={!!timeslotData.meetingReview}
+                    onChange={(e) => setMeetingReviewNotes(e.target.value)}
+                    className="border-2 w-full"
+                  />
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <DialogFooter className="sm:justify-end">
+          <DialogClose asChild>
+            <Button type="button" variant="secondary">
+              Close
+            </Button>
+          </DialogClose>
+          <Button type="submit" onClick={() => handleCreateReviewForMeeting(timeslotData)}>
+            Submit
+          </Button>
+        </DialogFooter>
+      </DialogTemplateWithChildren>
     );
   };
   const currentUser = users[id]
@@ -148,7 +248,7 @@ export function CalendarViewCoach({ users }) {
             events={createEvents()}
             startAccessor="start"
             endAccessor="end"
-            style={{ height: 700 }}
+            style={{height: 700}}
             onSelectEvent={handleSelectEvent}
             onSelectSlot={handleSelectSlot}
             onView={handleViewChange}
