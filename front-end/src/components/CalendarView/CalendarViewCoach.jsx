@@ -4,17 +4,14 @@ import moment from "moment";
 
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import {useEffect, useState} from "react";
-
-const localizer = momentLocalizer(moment);
-
-import {
-  Dialog, DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
-} from "@/components/ui/dialog";
+import {Dialog, DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle,} from "@/components/ui/dialog";
 import {createNewSlot, fetchSlots} from "@/api/slots.js";
 import {createNewMeetingReview} from "@/api/meetingReviews.js";
 import {DialogTemplateWithChildren} from "@/components/CalendarView/DialogTemplateWithChildren.jsx"
 import {addTwoHoursToStart, formatDate} from "@/helpers/DateHelper.js";
 import {Button} from "@/components/ui/button.jsx";
+
+const localizer = momentLocalizer(moment);
 
 export function CalendarViewCoach({users}) {
   const [view, setView] = useState("month");

@@ -1,38 +1,27 @@
-import { useParams } from "react-router-dom";
-import { Calendar, momentLocalizer } from "react-big-calendar";
+import {useParams} from "react-router-dom";
+import {Calendar, momentLocalizer} from "react-big-calendar";
 import moment from "moment";
 
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
+import {Button} from "@/components/ui/button";
+import {Dialog, DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle,} from "@/components/ui/dialog";
+import {formatDate} from "@/helpers/DateHelper.js";
+import {fetchSlots, updateSlotWithStudent,} from "@/api/slots.js";
+import {DialogTemplateWithChildren} from "@/components/CalendarView/DialogTemplateWithChildren.jsx";
 
 const localizer = momentLocalizer(moment);
 
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { formatDate } from "@/helpers/DateHelper.js";
-import {
-  fetchSlots,
-  updateSlotWithStudent,
-} from "@/api/slots.js";
-
-export function CalendarViewStudent({ users }) {
+export function CalendarViewStudent({users}) {
   const [view, setView] = useState("month");
   const [date, setDate] = useState(moment());
   const [displayDialog, setDisplayDialog] = useState(false);
   const [timeslotData, setTimeslotData] = useState({});
   const [fetchedEvents, setFetchedEvents] = useState([]);
-  const { id } = useParams();
+  const {id} = useParams();
 
   useEffect(() => {
-    fetchSlots({ student_id: id }).then((data) => {
+    fetchSlots({student_id: id}).then((data) => {
       setFetchedEvents(data);
     });
   }, []);
@@ -82,7 +71,7 @@ export function CalendarViewStudent({ users }) {
   const printDialogContent = () => {
     if (timeslotData.status === "available") {
       return (
-        <>
+        <DialogTemplateWithChildren>
           <DialogHeader>
             <DialogTitle>Confirm Booking Slot</DialogTitle>
             <DialogDescription>Confirm Booking Timeslot</DialogDescription>
@@ -101,12 +90,23 @@ export function CalendarViewStudent({ users }) {
               </p>
             </div>
           </div>
-        </>
+          <DialogFooter className="sm:justify-end">
+            <DialogClose asChild>
+              <Button type="button" variant="secondary">
+                Close
+              </Button>
+            </DialogClose>
+            <Button type="submit" onClick={handleSubmit}>
+              Submit
+            </Button>
+          </DialogFooter>
+        </DialogTemplateWithChildren>
       );
     }
-    const { coach, student } = timeslotData;
+    const {coach, student} = timeslotData;
+
     return (
-      <>
+      <DialogTemplateWithChildren>
         <DialogHeader>
           <DialogTitle>Confirm Booking Slot</DialogTitle>
           <DialogDescription>Confirm Booking Timeslot</DialogDescription>
@@ -129,7 +129,14 @@ export function CalendarViewStudent({ users }) {
             </b>
           </div>
         </div>
-      </>
+        <DialogFooter className="sm:justify-end">
+          <DialogClose asChild>
+            <Button type="button" variant="secondary">
+              Close
+            </Button>
+          </DialogClose>
+        </DialogFooter>
+      </DialogTemplateWithChildren>
     );
   };
 
@@ -146,7 +153,7 @@ export function CalendarViewStudent({ users }) {
             events={createEvents()}
             startAccessor="start"
             endAccessor="end"
-            style={{ height: 700 }}
+            style={{height: 700}}
             onSelectEvent={handleSelectEvent}
             onView={handleViewChange}
             view={view}
@@ -159,23 +166,7 @@ export function CalendarViewStudent({ users }) {
 
         <div>
           <Dialog open={displayDialog} onOpenChange={handleClose}>
-            {displayDialog && (
-              <DialogContent className="max-w-screen-md">
-                {printDialogContent()}
-                <DialogFooter className="sm:justify-end">
-                  <DialogClose asChild>
-                    <Button type="button" variant="secondary">
-                      Close
-                    </Button>
-                  </DialogClose>
-                  {timeslotData.status !== "booked" && (
-                    <Button type="submit" onClick={handleSubmit}>
-                      Submit
-                    </Button>
-                  )}
-                </DialogFooter>
-              </DialogContent>
-            )}
+            {displayDialog && printDialogContent()}
           </Dialog>
         </div>
       </div>
