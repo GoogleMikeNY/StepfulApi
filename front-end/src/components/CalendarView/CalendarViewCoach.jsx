@@ -29,6 +29,12 @@ export function CalendarViewCoach({ users }) {
   const [timeslotData, setTimeslotData] = useState({});
   const [fetchedEvents, setFetchedEvents] = useState([]);
   const { id } = useParams();
+  /*
+  * TODO: Use useCallback for CreateEvents.
+  * TODO: Update useState for Fetched Events to use useReducer!
+  * https://react.dev/learn/extracting-state-logic-into-a-reducer
+  * */
+
 
   useEffect(() => {
     fetchSlots({ coach_id: id }).then((data) => {
