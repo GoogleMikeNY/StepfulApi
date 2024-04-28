@@ -1,30 +1,37 @@
-import {useParams} from "react-router-dom";
-import {Calendar, momentLocalizer} from "react-big-calendar";
-import moment from "moment";
+import { useParams } from 'react-router-dom';
+import { Calendar, momentLocalizer } from 'react-big-calendar';
+import moment from 'moment';
 
-import "react-big-calendar/lib/css/react-big-calendar.css";
-import {useEffect, useState} from "react";
-import {Dialog, DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle,} from "@/components/ui/dialog";
-import {createNewSlot, fetchSlots} from "@/api/slots.js";
-import {createNewMeetingReview} from "@/api/meetingReviews.js";
-import {DialogTemplate} from "@/components/CalendarView/DialogTemplate.jsx"
-import {addTwoHoursToStart, formatDate} from "@/helpers/DateHelper.js";
-import {Button} from "@/components/ui/button.jsx";
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { useEffect, useState } from 'react';
+import {
+  Dialog,
+  DialogClose,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { createNewSlot, fetchSlots } from '@/api/slots.js';
+import { createNewMeetingReview } from '@/api/meetingReviews.js';
+import { DialogTemplate } from '@/components/CalendarView/DialogTemplate.jsx';
+import { addTwoHoursToStart, formatDate } from '@/helpers/DateHelper.js';
+import { Button } from '@/components/ui/button.jsx';
 
 const localizer = momentLocalizer(moment);
 
-export function CalendarViewCoach({users}) {
-  const [view, setView] = useState("month");
-  const [meetingReviewRating, setMeetingReviewRating] = useState("");
+export function CalendarViewCoach({ users }) {
+  const [view, setView] = useState('month');
+  const [meetingReviewRating, setMeetingReviewRating] = useState('');
   const [date, setDate] = useState(moment());
-  const [meetingReviewNotes, setMeetingReviewNotes] = useState("");
+  const [meetingReviewNotes, setMeetingReviewNotes] = useState('');
   const [displayDialog, setDisplayDialog] = useState(false);
   const [timeslotData, setTimeslotData] = useState({});
   const [fetchedEvents, setFetchedEvents] = useState([]);
-  const {id} = useParams();
+  const { id } = useParams();
 
   useEffect(() => {
-    fetchSlots({coach_id: id}).then((data) => {
+    fetchSlots({ coach_id: id }).then((data) => {
       setFetchedEvents(data);
     });
   }, []);
@@ -54,14 +61,12 @@ export function CalendarViewCoach({users}) {
   };
 
   const handleSubmit = (timeslotData) => {
-    createNewSlot(id, timeslotData).then((e) =>
-      setFetchedEvents([...fetchedEvents, e]),
-    );
+    createNewSlot(id, timeslotData).then((e) => setFetchedEvents([...fetchedEvents, e]));
     handleClose();
   };
 
   const handleCreateReviewForMeeting = (selectedTimeslotData) => {
-    const {id: slotId} = selectedTimeslotData;
+    const { id: slotId } = selectedTimeslotData;
     createNewMeetingReview(slotId, {
       meetingReviewRating,
       meetingReviewNotes,
@@ -79,12 +84,12 @@ export function CalendarViewCoach({users}) {
   };
 
   const handleSelectSlot = (selectedTimeSlot) => {
-    if (view === "month") {
-      setView("week");
+    if (view === 'month') {
+      setView('week');
       setDate(moment(selectedTimeSlot.start));
     } else {
-      selectedTimeSlot.end = addTwoHoursToStart(selectedTimeSlot.start)
-      selectedTimeSlot.status = "new";
+      selectedTimeSlot.end = addTwoHoursToStart(selectedTimeSlot.start);
+      selectedTimeSlot.status = 'new';
       setTimeslotData(selectedTimeSlot);
       setDisplayDialog(true);
     }
@@ -99,7 +104,7 @@ export function CalendarViewCoach({users}) {
   };
 
   const printDialogContent = () => {
-    if (timeslotData.status === "new") {
+    if (timeslotData.status === 'new') {
       return (
         <DialogTemplate>
           <DialogHeader>
@@ -110,8 +115,7 @@ export function CalendarViewCoach({users}) {
             <div className="grid">
               Booking:
               <p>
-                Block of time: {formatDate(timeslotData.start)} -{" "}
-                {formatDate(timeslotData.end)}
+                Block of time: {formatDate(timeslotData.start)} - {formatDate(timeslotData.end)}
               </p>
             </div>
           </div>
@@ -129,7 +133,7 @@ export function CalendarViewCoach({users}) {
       );
     }
 
-    if (timeslotData.status === "available") {
+    if (timeslotData.status === 'available') {
       return (
         <DialogTemplate>
           <DialogHeader>
@@ -140,8 +144,7 @@ export function CalendarViewCoach({users}) {
             <div className="grid">
               Booking:
               <p>
-                Block of time: {formatDate(timeslotData.start)} -{" "}
-                {formatDate(timeslotData.end)}
+                Block of time: {formatDate(timeslotData.start)} - {formatDate(timeslotData.end)}
               </p>
             </div>
           </div>
@@ -155,7 +158,7 @@ export function CalendarViewCoach({users}) {
         </DialogTemplate>
       );
     }
-    const {coach, student} = timeslotData;
+    const { coach, student } = timeslotData;
     return (
       <DialogTemplate>
         <DialogHeader>
@@ -165,10 +168,7 @@ export function CalendarViewCoach({users}) {
         <div className="flex space-x-2 justify-between">
           <div className="grid">
             Booked Slot:
-            <p>
-              This session is in the books with {timeslotData.student?.name}!
-              following block of time:
-            </p>
+            <p>This session is in the books with {timeslotData.student?.name}! following block of time:</p>
             <p>
               {formatDate(timeslotData.start)} - {formatDate(timeslotData.end)}
             </p>
@@ -181,10 +181,7 @@ export function CalendarViewCoach({users}) {
                 Student -- {student?.name}: {student?.phone_number}
               </p>
             </b>
-            <p>
-              If this meeting has occurred, please rate the following session with{" "}
-              {timeslotData?.student?.name}.
-            </p>
+            <p>If this meeting has occurred, please rate the following session with {timeslotData?.student?.name}.</p>
             <div className="flex mt-4 justify-between">
               <div className="w-1/2">
                 <label>
@@ -230,7 +227,7 @@ export function CalendarViewCoach({users}) {
       </DialogTemplate>
     );
   };
-  const currentUser = users[id]
+  const currentUser = users[id];
 
   return (
     <div className="w-full">
@@ -245,7 +242,7 @@ export function CalendarViewCoach({users}) {
             events={createEvents()}
             startAccessor="start"
             endAccessor="end"
-            style={{height: 700}}
+            style={{ height: 700 }}
             onSelectEvent={handleSelectEvent}
             onSelectSlot={handleSelectSlot}
             onView={handleViewChange}

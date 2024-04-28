@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import { getUsers } from "@/api/users.js";
-import { Link, useParams } from "react-router-dom";
-import { CalendarViewCoach } from "@/components/CalendarView/CalendarViewCoach.jsx";
-import { CalendarViewStudent } from "@/components/CalendarView/CalendarViewStudent.jsx";
+import { useEffect, useState } from 'react';
+import { getUsers } from '@/api/users.js';
+import { Link, useParams } from 'react-router-dom';
+import { CalendarViewCoach } from '@/components/CalendarView/CalendarViewCoach.jsx';
+import { CalendarViewStudent } from '@/components/CalendarView/CalendarViewStudent.jsx';
 
 export function Calendar() {
   const [users, setUsers] = useState({});
@@ -14,7 +14,7 @@ export function Calendar() {
   const { id } = useParams();
 
   const user = users[id];
-  if (user?.user_type === "coach") {
+  if (user?.user_type === 'coach') {
     return (
       <div>
         This is a coach!
@@ -22,7 +22,7 @@ export function Calendar() {
       </div>
     );
   }
-  if (user?.user_type === "student") {
+  if (user?.user_type === 'student') {
     return (
       <div>
         This is a STUDENT!!!
@@ -33,13 +33,11 @@ export function Calendar() {
 
   return (
     <>
-      <p>
-        Either users are being loaded, or there's an error within the route.
+      <p>Either users are being loaded, or there's an error within the route.</p>
+      <p>Please navigate to the root and choose a valid user:</p>
+      <p className="text-3xl">
+        <Link to={`/`}>Here</Link>
       </p>
-      <p>
-        Please navigate to the root and choose a valid user:
-      </p>
-      <p className='text-3xl'><Link to={`/`}>Here</Link></p>
     </>
   );
 }

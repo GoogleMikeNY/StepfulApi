@@ -1,27 +1,34 @@
-import {useParams} from "react-router-dom";
-import {Calendar, momentLocalizer} from "react-big-calendar";
-import moment from "moment";
+import { useParams } from 'react-router-dom';
+import { Calendar, momentLocalizer } from 'react-big-calendar';
+import moment from 'moment';
 
-import "react-big-calendar/lib/css/react-big-calendar.css";
-import {useEffect, useState} from "react";
-import {Button} from "@/components/ui/button";
-import {Dialog, DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle,} from "@/components/ui/dialog";
-import {formatDate} from "@/helpers/DateHelper.js";
-import {fetchSlots, updateSlotWithStudent,} from "@/api/slots.js";
-import {DialogTemplate} from "@/components/CalendarView/DialogTemplate.jsx";
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogClose,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { formatDate } from '@/helpers/DateHelper.js';
+import { fetchSlots, updateSlotWithStudent } from '@/api/slots.js';
+import { DialogTemplate } from '@/components/CalendarView/DialogTemplate.jsx';
 
 const localizer = momentLocalizer(moment);
 
-export function CalendarViewStudent({users}) {
-  const [view, setView] = useState("month");
+export function CalendarViewStudent({ users }) {
+  const [view, setView] = useState('month');
   const [date, setDate] = useState(moment());
   const [displayDialog, setDisplayDialog] = useState(false);
   const [timeslotData, setTimeslotData] = useState({});
   const [fetchedEvents, setFetchedEvents] = useState([]);
-  const {id} = useParams();
+  const { id } = useParams();
 
   useEffect(() => {
-    fetchSlots({student_id: id}).then((data) => {
+    fetchSlots({ student_id: id }).then((data) => {
       setFetchedEvents(data);
     });
   }, []);
@@ -34,7 +41,7 @@ export function CalendarViewStudent({users}) {
       title: `${users[e.coach_id]?.name}`,
       status: e.status,
       coach: users[e.coach_id],
-      student: users[e.student_id]
+      student: users[e.student_id],
     }));
   };
 
@@ -69,7 +76,7 @@ export function CalendarViewStudent({users}) {
   const currentUser = users[id];
 
   const printDialogContent = () => {
-    if (timeslotData.status === "available") {
+    if (timeslotData.status === 'available') {
       return (
         <DialogTemplate>
           <DialogHeader>
@@ -78,15 +85,11 @@ export function CalendarViewStudent({users}) {
           </DialogHeader>
           <div className="flex items-center space-x-2">
             <div className="grid">
-              {" "}
+              {' '}
               Booking:
+              <p>Please confirm you wish to meet with {timeslotData.title} at the following block of time:</p>
               <p>
-                Please confirm you wish to meet with {timeslotData.title} at the
-                following block of time:
-              </p>
-              <p>
-                {formatDate(timeslotData.start)} -{" "}
-                {formatDate(timeslotData.end)}
+                {formatDate(timeslotData.start)} - {formatDate(timeslotData.end)}
               </p>
             </div>
           </div>
@@ -103,7 +106,7 @@ export function CalendarViewStudent({users}) {
         </DialogTemplate>
       );
     }
-    const {coach, student} = timeslotData;
+    const { coach, student } = timeslotData;
 
     return (
       <DialogTemplate>
@@ -115,8 +118,7 @@ export function CalendarViewStudent({users}) {
           <div className="grid">
             <p>Booked slot!</p>
             <p>
-              You'll be meeting with {coach.name} at{" "}
-              {formatDate(timeslotData.start)}.
+              You'll be meeting with {coach.name} at {formatDate(timeslotData.start)}.
             </p>
             <p>Here are the phone numbers for the meetings:</p>
             <b>
@@ -153,7 +155,7 @@ export function CalendarViewStudent({users}) {
             events={createEvents()}
             startAccessor="start"
             endAccessor="end"
-            style={{height: 700}}
+            style={{ height: 700 }}
             onSelectEvent={handleSelectEvent}
             onView={handleViewChange}
             view={view}

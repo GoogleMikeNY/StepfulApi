@@ -1,18 +1,18 @@
-const {VITE_API_URL} = import.meta.env
+const { VITE_API_URL } = import.meta.env;
 
-export const createNewMeetingReview = async (slotId, {meetingReviewRating, meetingReviewNotes}) => {
+export const createNewMeetingReview = async (slotId, { meetingReviewRating, meetingReviewNotes }) => {
   const slotResponse = await fetch(`${VITE_API_URL}/meeting_reviews`, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json",
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
     },
     body: JSON.stringify({
       slot_id: slotId,
       rating: meetingReviewRating,
       notes: meetingReviewNotes,
-    })
-  })
+    }),
+  });
 
-  return await slotResponse.json()
-}
+  return await slotResponse.json();
+};

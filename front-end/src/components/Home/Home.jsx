@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { getUsers } from "@/api/users.js";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { getUsers } from '@/api/users.js';
+import { Link } from 'react-router-dom';
 
 export function Home() {
   const [users, setUsers] = useState({});
@@ -10,7 +10,7 @@ export function Home() {
 
   return (
     <>
-      <p className='text-3xl mb-16'>📆 Booking Calendar App 📆</p>
+      <p className="text-3xl mb-16">📆 Booking Calendar App 📆</p>
       {Object.values(users).map((u) => {
         return (
           <div key={u.id}>
